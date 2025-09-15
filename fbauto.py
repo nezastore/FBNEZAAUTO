@@ -38,7 +38,7 @@ def create_mail_tm_account():
     if mail_domains:
         domain = random.choice(mail_domains)['domain']
         username = generate_random_string(10)
-        password = "Neza@#$123" 
+        password = fake.password()
         birthday = fake.date_of_birth(minimum_age=18, maximum_age=45)
         first_name = fake.first_name()
         last_name = fake.last_name()
@@ -48,7 +48,7 @@ def create_mail_tm_account():
         try:
             response = requests.post(url, headers=headers, json=data)
             if response.status_code == 201:
-                print(f'')
+                print(f'\n\x1b[38;5;46m[✓] Email Sementara Dibuat:\n    EMAIL: {username}@{domain}\n    PASS : {password}\x1b[0m')
                 return f"{username}@{domain}", password, first_name, last_name, birthday
             else:
                 print(f'[×] Email Error : {response.text}')
@@ -93,12 +93,6 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
     id = reg['new_user_id']
     token = reg['session_info']['access_token']
     
-    # --- BAGIAN YANG DITAMBAHKAN ---
-    # Membuat format cookie dari data yang didapat (ID sebagai c_user, Token sebagai xs)
-    # Peringatan: Ini hanya untuk format, bukan cookie login asli.
-    cookie = f"c_user={id}; xs={token}"
-    # -------------------------------
-
     print(f'''
 \x1b[38;5;22m⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙
 ﴾𝐕𝐈𝐏﴿ EMAIL : {email}
@@ -109,7 +103,6 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
 ﴾𝐕𝐈𝐏﴿GENDER : {gender}
 ⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙
 ﴾𝐕𝐈𝐏﴿ Token : {token}
-﴾𝐕𝐈𝐏﴿ Cookie : {cookie}
 ⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙''')
 
 def _call(url, params, post=True):
