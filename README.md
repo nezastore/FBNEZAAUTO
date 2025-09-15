@@ -4,4 +4,4 @@ cd FBAutoCreater
 
 pip install faker
 
-python fbauto.py
+python3 fbauto.py
