@@ -93,6 +93,12 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
     id = reg['new_user_id']
     token = reg['session_info']['access_token']
     
+    # --- BAGIAN YANG DITAMBAHKAN ---
+    # Membuat format cookie dari data yang didapat (ID sebagai c_user, Token sebagai xs)
+    # Peringatan: Ini hanya untuk format, bukan cookie login asli.
+    cookie = f"c_user={id}; xs={token}"
+    # -------------------------------
+
     print(f'''
 \x1b[38;5;22m⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙
 ﴾𝐕𝐈𝐏﴿ EMAIL : {email}
@@ -103,6 +109,7 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
 ﴾𝐕𝐈𝐏﴿GENDER : {gender}
 ⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙
 ﴾𝐕𝐈𝐏﴿ Token : {token}
+﴾𝐕𝐈𝐏﴿ Cookie : {cookie}
 ⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙''')
 
 def _call(url, params, post=True):
