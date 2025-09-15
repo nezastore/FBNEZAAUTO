@@ -1,4 +1,5 @@
-socks5://45.43.70.152:6439:ptljfvab:kahsvsgekhys
-socks5://45.43.70.152:6439:ptljfvab:kahsvsgekhys
-socks5://45.43.70.152:6439:ptljfvab:kahsvsgekhys
-socks5://45.43.70.152:6439:ptljfvab:kahsvsgekhys
+socks5://pt1jfvab:kahsvsgekhys@45.43.70.152:6439
+socks5://pt1jfvab:kahsvsgekhys@45.43.70.152:6439
+socks5://pt1jfvab:kahsvsgekhys@45.43.70.152:6439
+socks5://pt1jfvab:kahsvsgekhys@45.43.70.152:6439
+socks5://pt1jfvab:kahsvsgekhys@45.43.70.152:6439
