@@ -6,36 +6,17 @@ import hashlib
 import time
 from faker import Faker
 
-# --- Fungsi untuk memuat proxy dari file ---
-def load_proxies(filename="proxy.txt"):
-    proxies = []
-    try:
-        with open(filename, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    proxies.append(line)
-        print(f"\x1b[38;5;46m[✓] Berhasil memuat {len(proxies)} proxy dari {filename}\x1b[0m")
-        return proxies
-    except FileNotFoundError:
-        print(f"\x1b[38;5;196m[×] File {filename} tidak ditemukan. Pastikan file tersebut ada di folder yang sama.\x1b[0m")
-        return []
-    except Exception as e:
-        print(f"\x1b[38;5;196m[×] Terjadi error saat memuat proxy: {e}\x1b[0m")
-        return []
-
-print(f"""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓          
-❖ › Channel :- @NezaFx 
-❖ › By      :- @NezaFvnky
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛          """)
-print('\x1b[38;5;208m⇼'*60)
-print('\x1b[38;5;22m•'*60)
-print('\x1b[38;5;22m•'*60)
-print('\x1b[38;5;208m⇼'*60)
-
-# Muat proxy saat skrip dimulai
-proxies_list = load_proxies()
+def print_banner():
+    banner = """
+\x1b[38;5;46m    █▀▄▀█ █▀▀ █▀▀█   █▀▀█ █░░█ ▀▀█▀▀ █▀▀ █▀▀█ 
+\x1b[38;5;47m    █░▀░█ █▀▀ █▄▄█   █▄▄█ █░░█ ░░█░░ █▀▀ █▄▄▀ 
+\x1b[38;5;48m    ▀░░░▀ ▀▀▀ ▀░░▀   ▀░░▀ ░▀▀▀ ░░▀░░ ▀▀▀ ▀░▀▀ 
+\x1b[38;5;226m                Auto Register Facebook
+\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+\x1b[38;5;22m❖ › Channel : @NezaFx                ❖ › By : @NezaFvnky
+\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m
+"""
+    print(banner)
 
 def generate_random_string(length):
     letters_and_digits = string.ascii_letters + string.digits
@@ -47,20 +28,18 @@ def get_mail_domains():
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             return response.json()['hydra:member']
-        else:
-            print(f'[×] E-mail Error : {response.text}')
-            return None
-    except Exception as e:
-        print(f'[×] Error saat mengambil domain email: {e}')
+    except Exception:
         return None
+    return None
 
 def create_mail_tm_account():
+    print("\x1b[38;5;226m[~] Membuat akun mail.tm...")
     fake = Faker()
     mail_domains = get_mail_domains()
     if mail_domains:
         domain = random.choice(mail_domains)['domain']
-        username = generate_random_string(10)
-        password = fake.password()
+        username = generate_random_string(12)
+        password = fake.password(length=10)
         birthday = fake.date_of_birth(minimum_age=18, maximum_age=45)
         first_name = fake.first_name()
         last_name = fake.last_name()
@@ -70,16 +49,16 @@ def create_mail_tm_account():
         try:
             response = requests.post(url, headers=headers, json=data, timeout=10)
             if response.status_code == 201:
-                print(f'\n\x1b[38;5;46m[✓] Email Sementara Dibuat:\n    EMAIL: {username}@{domain}\n    PASS : {password}\x1b[0m')
+                print(f"\x1b[38;5;46m[✓] Email sementara berhasil dibuat.\x1b[0m")
                 return f"{username}@{domain}", password, first_name, last_name, birthday
-            else:
-                print(f'[×] Email Error : {response.text}')
-                return None, None, None, None, None
         except Exception as e:
-            print(f'[×] Error saat membuat email: {e}')
+            print(f"\x1b[38;5;196m[!] Gagal membuat email: {e}\x1b[0m")
             return None, None, None, None, None
+    print(f"\x1b[38;5;196m[!] Gagal mendapatkan domain dari mail.tm.\x1b[0m")
+    return None, None, None, None, None
 
-def register_facebook_account(email, password, first_name, last_name, birthday, proxy):
+def register_facebook_account(email, password, first_name, last_name, birthday):
+    print("\x1b[38;5;226m[~] Mencoba mendaftar ke Facebook...")
     api_key = '882a8490361da98702bf97a021ddc14d'
     secret = '62f8ce9f74b12f84c123cc23437a4a32'
     gender = random.choice(['M', 'F'])
@@ -97,80 +76,67 @@ def register_facebook_account(email, password, first_name, last_name, birthday, 
     req['sig'] = ensig
     api_url = 'https://b-api.facebook.com/method/user.register'
     
-    # Panggil fungsi _call dengan menyertakan proxy
-    reg = _call(api_url, req, proxy=proxy)
+    reg = _call(api_url, req)
     
-    if not reg:
+    if not reg or 'error_msg' in reg:
+        error_message = reg.get('error_msg', 'Koneksi gagal atau respons tidak valid.') if reg else 'Koneksi gagal.'
+        print(f"\x1b[38;5;196m[!] PENDAFTARAN GAGAL: {error_message}\x1b[0m")
         return
 
-    if 'error_msg' in reg:
-        print(f"\x1b[38;5;196m[×] Gagal mendaftar Facebook: {reg['error_msg']} ({reg.get('error_code', 'N/A')})\x1b[0m")
-        return
-
-    id = reg['new_user_id']
+    id_akun = reg['new_user_id']
     token = reg['session_info']['access_token']
     
-    print(f'''
-\x1b[38;5;22m⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙
-﴾𝐕𝐈𝐏﴿ EMAIL : {email}
-﴾𝐕𝐈𝐏﴿ ID : {id}
-﴾𝐕𝐈𝐏﴿ PASSWORD : {password}
-﴾𝐕𝐈𝐏﴿ NAME : {first_name} {last_name}
-﴾𝐕𝐈𝐏﴿ BIRTHDAY : {birthday} 
-﴾𝐕𝐈𝐏﴿GENDER : {gender}
-⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙
-﴾𝐕𝐈𝐏﴿ Token : {token}
-⋘▬▭▬▭▬▭▬﴾𓆩OK𓆪﴿▬▭▬▭▬▭▬⋙''')
+    print("\x1b[38;5;46m[✓] PENDAFTARAN BERHASIL!\x1b[0m")
+    print_account_info(email, password, id_akun, f"{first_name} {last_name}", birthday, gender, token)
 
-# --- Fungsi _call diubah untuk menerima dan menggunakan proxy ---
-def _call(url, params, proxy, post=True):
+def print_account_info(email, pw, uid, name, dob, gender, token):
+    info = f"""
+\x1b[38;5;208m    ┌─ \x1b[1;37mINFO AKUN BERHASIL DIBUAT\x1b[0m
+\x1b[38;5;208m    ├─ Email    : \x1b[38;5;22m{email}\x1b[0m
+\x1b[38;5;208m    ├─ Password : \x1b[38;5;22m{pw}\x1b[0m
+\x1b[38;5;208m    ├─ Nama     : \x1b[38;5;22m{name}\x1b[0m
+\x1b[38;5;208m    ├─ UID      : \x1b[38;5;22m{uid}\x1b[0m
+\x1b[38;5;208m    ├─ TTL      : \x1b[38;5;22m{dob.strftime('%d-%m-%Y')} ({gender})\x1b[0m
+\x1b[38;5;208m    └─ Token    : \x1b[38;5;22m{token[:25]}...\x1b[0m
+    """
+    print(info)
+
+def _call(url, params, post=True):
     headers = {'User-Agent': '[FBAN/FB4A;FBAV/35.0.0.48.273;FBDM/{density=1.33125,width=800,height=1205};FBLC/en_US;FBCR/;FBPN/com.facebook.katana;FBDV/Nexus 7;FBSV/4.1.1;FBBK/0;]'}
-    
-    # Format proxy untuk library requests
-    proxy_dict = {
-        'http': proxy,
-        'https': proxy
-    }
-    
     try:
         if post:
-            response = requests.post(url, data=params, headers=headers, proxies=proxy_dict, timeout=15)
+            response = requests.post(url, data=params, headers=headers, timeout=15)
         else:
-            response = requests.get(url, params=params, headers=headers, proxies=proxy_dict, timeout=15)
+            response = requests.get(url, params=params, headers=headers, timeout=15)
         return response.json()
-    except requests.exceptions.ProxyError as e:
-        print(f"\x1b[38;5;196m[×] Error Proxy: Proxy {proxy} tidak berfungsi atau menolak koneksi.\x1b[0m")
-        return None
-    except requests.exceptions.Timeout:
-        print(f"\x1b[38;5[196m[×] Error: Koneksi ke {proxy} timeout.\x1b[0m")
-        return None
     except Exception as e:
-        print(f"\x1b[38;5;196m[×] Terjadi error koneksi: {e}\x1b[0m")
+        print(f"\x1b[38;5;196m[!] Error Koneksi: {e}\x1b[0m")
         return None
 
 # --- Loop Utama ---
-try:
-    if not proxies_list:
-        print("\n\x1b[38;5;196m[!] Tidak ada proxy yang dimuat. Skrip tidak dapat dilanjutkan. Mohon isi file proxy.txt\x1b[0m")
-    else:
-        jumlah_akun = int(input('[+] How Many Accounts You Want:  '))
-        for i in range(jumlah_akun):
-            print(f"\n\x1b[38;5;22m--- Membuat Akun ke-{i+1} ---\x1b[0m")
-            
-            # Pilih proxy secara acak dari daftar
-            selected_proxy = random.choice(proxies_list)
-            print(f"\x1b[38;5;226m[i] Menggunakan proxy: {selected_proxy}\x1b[0m")
+if __name__ == "__main__":
+    print_banner()
+    try:
+        jumlah_akun = int(input('\x1b[38;5;226m[?] Berapa banyak akun yang ingin Anda buat?: \x1b[0m'))
+        print('\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m')
 
+        for i in range(jumlah_akun):
+            print(f"\n\x1b[1;37m--- Memproses Akun #{i+1} dari {jumlah_akun} ---\x1b[0m")
             email, password, first_name, last_name, birthday = create_mail_tm_account()
-            if email and password and first_name and last_name and birthday:
-                register_facebook_account(email, password, first_name, last_name, birthday, proxy=selected_proxy)
+            if email:
+                register_facebook_account(email, password, first_name, last_name, birthday)
+            else:
+                print(f"\x1b[38;5;196m[!] Gagal membuat email, proses untuk akun #{i+1} dihentikan.\x1b[0m")
             
             # Beri jeda antar pembuatan akun untuk mengurangi risiko
-            time.sleep(5)
+            time.sleep(3)
 
-except ValueError:
-    print("\n[×] Input tidak valid. Harap masukkan angka.")
-except Exception as e:
-    print(f"\n[×] Terjadi error tak terduga: {e}")
+    except ValueError:
+        print("\n\x1b[38;5;196m[!] Input tidak valid. Harap masukkan angka.\x1b[0m")
+    except KeyboardInterrupt:
+        print("\n\x1b[38;5;226m[!] Proses dihentikan oleh pengguna.\x1b[0m")
+    except Exception as e:
+        print(f"\n\x1b[38;5;196m[!] Terjadi error tak terduga: {e}\x1b[0m")
 
-print('\x1b[38;5;208m⇼'*60)
+    print('\n\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m')
+    print("\x1b[38;5;46m[✓] Selesai.\x1b[0m")
