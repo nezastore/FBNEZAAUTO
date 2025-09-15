@@ -7,14 +7,18 @@ import time
 from faker import Faker
 
 def print_banner():
+    """Mencetak banner program dengan gaya baru."""
     banner = """
-\x1b[38;5;46m    █▀▄▀█ █▀▀ █▀▀█   █▀▀█ █░░█ ▀▀█▀▀ █▀▀ █▀▀█ 
-\x1b[38;5;47m    █░▀░█ █▀▀ █▄▄█   █▄▄█ █░░█ ░░█░░ █▀▀ █▄▄▀ 
-\x1b[38;5;48m    ▀░░░▀ ▀▀▀ ▀░░▀   ▀░░▀ ░▀▀▀ ░░▀░░ ▀▀▀ ▀░▀▀ 
-\x1b[38;5;226m                Auto Register Facebook
-\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-\x1b[38;5;22m❖ › Channel : @NezaFx                ❖ › By : @NezaFvnky
-\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m
+\x1b[38;5;226m    ███████╗██╗  ██╗███████╗███████╗ ██████╗██╗  ██╗
+\x1b[38;5;220m    ██╔════╝██║  ██║██╔════╝██╔════╝██╔════╝██║  ██║
+\x1b[38;5;214m    ███████╗███████║█████╗  █████╗  ██║     ███████║
+\x1b[38;5;208m    ╚════██║██╔══██║██╔══╝  ██╔══╝  ██║     ██╔══██║
+\x1b[38;5;202m    ███████║██║  ██║███████╗███████╗╚██████╗██║  ██║
+\x1b[38;5;196m    ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝
+\x1b[38;5;47m            Facebook Auto Registration Tool
+\x1b[38;5;208m========================================================
+\x1b[38;5;22m  Channel: @NezaFx                Author: @NezaFvnky
+\x1b[38;5;208m========================================================\x1b[0m
 """
     print(banner)
 
@@ -90,16 +94,33 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
     print_account_info(email, password, id_akun, f"{first_name} {last_name}", birthday, gender, token)
 
 def print_account_info(email, pw, uid, name, dob, gender, token):
-    info = f"""
-\x1b[38;5;208m    ┌─ \x1b[1;37mINFO AKUN BERHASIL DIBUAT\x1b[0m
-\x1b[38;5;208m    ├─ Email    : \x1b[38;5;22m{email}\x1b[0m
-\x1b[38;5;208m    ├─ Password : \x1b[38;5;22m{pw}\x1b[0m
-\x1b[38;5;208m    ├─ Nama     : \x1b[38;5;22m{name}\x1b[0m
-\x1b[38;5;208m    ├─ UID      : \x1b[38;5;22m{uid}\x1b[0m
-\x1b[38;5;208m    ├─ TTL      : \x1b[38;5;22m{dob.strftime('%d-%m-%Y')} ({gender})\x1b[0m
-\x1b[38;5;208m    └─ Token    : \x1b[38;5;22m{token[:25]}...\x1b[0m
-    """
-    print(info)
+    """Mencetak informasi akun dalam kotak yang rapi dan sejajar."""
+    info_dict = {
+        "Email": email,
+        "Password": pw,
+        "Nama": name,
+        "UID": uid,
+        "TTL": f"{dob.strftime('%d-%m-%Y')} ({gender})",
+        "Token": f"{token[:30]}..."
+    }
+    
+    # Menentukan lebar kotak berdasarkan data terpanjang
+    max_label_len = max(len(k) for k in info_dict.keys())
+    max_value_len = max(len(v) for v in info_dict.values())
+    box_width = max_label_len + max_value_len + 7  # 7 untuk spasi dan border
+    
+    # Cetak Kotak
+    print("\n\x1b[38;5;47m" + "+-" + "-" * box_width + "-+")
+    print(f"| \x1b[1;37m{'INFORMASI AKUN':^{box_width}} \x1b[0m\x1b[38;5;47m|")
+    print("+-" + "-" * box_width + "-+")
+    
+    for label, value in info_dict.items():
+        label_padded = label.ljust(max_label_len)
+        value_padded = value.ljust(max_value_len)
+        print(f"| \x1b[38;5;226m{label_padded} : \x1b[38;5;46m{value_padded} \x1b[0m\x1b[38;5;47m|")
+        
+    print("+-" + "-" * box_width + "-+" + "\x1b[0m\n")
+
 
 def _call(url, params, post=True):
     headers = {'User-Agent': '[FBAN/FB4A;FBAV/35.0.0.48.273;FBDM/{density=1.33125,width=800,height=1205};FBLC/en_US;FBCR/;FBPN/com.facebook.katana;FBDV/Nexus 7;FBSV/4.1.1;FBBK/0;]'}
@@ -118,7 +139,7 @@ if __name__ == "__main__":
     print_banner()
     try:
         jumlah_akun = int(input('\x1b[38;5;226m[?] Berapa banyak akun yang ingin Anda buat?: \x1b[0m'))
-        print('\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m')
+        print('\x1b[38;5;208m' + '='*56 + '\x1b[0m')
 
         for i in range(jumlah_akun):
             print(f"\n\x1b[1;37m--- Memproses Akun #{i+1} dari {jumlah_akun} ---\x1b[0m")
@@ -128,7 +149,6 @@ if __name__ == "__main__":
             else:
                 print(f"\x1b[38;5;196m[!] Gagal membuat email, proses untuk akun #{i+1} dihentikan.\x1b[0m")
             
-            # Beri jeda antar pembuatan akun untuk mengurangi risiko
             time.sleep(3)
 
     except ValueError:
@@ -138,5 +158,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\x1b[38;5;196m[!] Terjadi error tak terduga: {e}\x1b[0m")
 
-    print('\n\x1b[38;5;208m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m')
+    print('\n\x1b[38;5;208m' + '='*56 + '\x1b[0m')
     print("\x1b[38;5;46m[✓] Selesai.\x1b[0m")
