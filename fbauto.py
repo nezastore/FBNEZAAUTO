@@ -101,12 +101,17 @@ def print_account_info(email, pw, uid, name, dob, gender, token):
         "Nama": name,
         "UID": uid,
         "TTL": f"{dob.strftime('%d-%m-%Y')} ({gender})",
-        "Token": f"{token[:30]}..."
+        "Token": token  # Menampilkan token lengkap
     }
     
     # Menentukan lebar kotak berdasarkan data terpanjang
     max_label_len = max(len(k) for k in info_dict.keys())
-    max_value_len = max(len(v) for v in info_dict.values())
+    # Menghitung lebar value terpanjang, khusus untuk token yang bisa sangat panjang
+    max_value_len = 0
+    for v in info_dict.values():
+        if len(v) > max_value_len:
+            max_value_len = len(v)
+
     box_width = max_label_len + max_value_len + 7  # 7 untuk spasi dan border
     
     # Cetak Kotak
@@ -116,9 +121,21 @@ def print_account_info(email, pw, uid, name, dob, gender, token):
     
     for label, value in info_dict.items():
         label_padded = label.ljust(max_label_len)
-        value_padded = value.ljust(max_value_len)
-        print(f"| \x1b[38;5;226m{label_padded} : \x1b[38;5;46m{value_padded} \x1b[0m\x1b[38;5;47m|")
+        # Membuat value terbungkus rapi jika terlalu panjang (khususnya token)
+        # Ini adalah pendekatan sederhana, untuk yang lebih kompleks perlu library textwrap
+        value_chunks = [value[i:i+max_value_len] for i in range(0, len(value), max_value_len)]
         
+        # Cetak baris pertama dengan label
+        value_padded_first = value_chunks[0].ljust(max_value_len)
+        print(f"| \x1b[38;5;226m{label_padded} : \x1b[38;5;46m{value_padded_first} \x1b[0m\x1b[38;5;47m|")
+        
+        # Cetak sisa baris (jika ada) tanpa label
+        if len(value_chunks) > 1:
+            empty_label = " " * max_label_len
+            for chunk in value_chunks[1:]:
+                chunk_padded = chunk.ljust(max_value_len)
+                print(f"| \x1b[38;5;226m{empty_label}   \x1b[38;5;46m{chunk_padded} \x1b[0m\x1b[38;5;47m|")
+
     print("+-" + "-" * box_width + "-+" + "\x1b[0m\n")
 
 
