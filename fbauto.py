@@ -7,20 +7,25 @@ import time
 from faker import Faker
 
 def print_banner():
-    """Mencetak banner program dengan gaya baru."""
-    banner = """
-\x1b[38;5;226m    ███████╗██╗  ██╗███████╗███████╗ ██████╗██╗  ██╗
-\x1b[38;5;220m    ██╔════╝██║  ██║██╔════╝██╔════╝██╔════╝██║  ██║
-\x1b[38;5;214m    ███████╗███████║█████╗  █████╗  ██║     ███████║
-\x1b[38;5;208m    ╚════██║██╔══██║██╔══╝  ██╔══╝  ██║     ██╔══██║
-\x1b[38;5;202m    ███████║██║  ██║███████╗███████╗╚██████╗██║  ██║
-\x1b[38;5;196m    ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝
-\x1b[38;5;47m            Facebook Auto Registration Tool
-\x1b[38;5;208m========================================================
-\x1b[38;5;22m  Channel: @NezaFx                Author: @NezaFvnky
-\x1b[38;5;208m========================================================\x1b[0m
-"""
-    print(banner)
+    """Mencetak banner program dengan gaya profesional."""
+    colors = ['\x1b[38;5;46m', '\x1b[38;5;47m', '\x1b[38;5;48m', '\x1b[38;5;49m', '\x1b[38;5;50m', '\x1b[38;5;51m']
+    banner_art = [
+        "███████╗ ██████╗ ██████╗ ███████╗  ██████╗",
+        "██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔═══██╗",
+        "█████╗  ██║   ██║██████╔╝█████╗  ██║   ██║",
+        "██╔══╝  ██║   ██║██╔══██╗██╔══╝  ██║   ██║",
+        "██║     ╚██████╔╝██║  ██║███████╗╚██████╔╝",
+        "╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ",
+    ]
+    
+    print()
+    for i, line in enumerate(banner_art):
+        print(colors[i] + '    ' + line + '\x1b[0m')
+    
+    print('\n\x1b[1;37m' + '─' * 52)
+    print('\x1b[38;5;226m' + '        Facebook Automatic Registration Tool' + '\x1b[0m')
+    print('\x1b[1;37m' + '─' * 52 + '\x1b[0m\n')
+
 
 def generate_random_string(length):
     letters_and_digits = string.ascii_letters + string.digits
@@ -37,7 +42,7 @@ def get_mail_domains():
     return None
 
 def create_mail_tm_account():
-    print("\x1b[38;5;226m[~] Membuat akun mail.tm...")
+    print("\x1b[38;5;226m[~] Membuat akun email sementara...\x1b[0m")
     fake = Faker()
     mail_domains = get_mail_domains()
     if mail_domains:
@@ -53,7 +58,7 @@ def create_mail_tm_account():
         try:
             response = requests.post(url, headers=headers, json=data, timeout=10)
             if response.status_code == 201:
-                print(f"\x1b[38;5;46m[✓] Email sementara berhasil dibuat.\x1b[0m")
+                print(f"\x1b[38;5;46m[✓] Email berhasil dibuat: {username}@{domain}\x1b[0m")
                 return f"{username}@{domain}", password, first_name, last_name, birthday
         except Exception as e:
             print(f"\x1b[38;5;196m[!] Gagal membuat email: {e}\x1b[0m")
@@ -62,12 +67,12 @@ def create_mail_tm_account():
     return None, None, None, None, None
 
 def register_facebook_account(email, password, first_name, last_name, birthday):
-    print("\x1b[38;5;226m[~] Mencoba mendaftar ke Facebook...")
+    print("\x1b[38;5;226m[~] Mencoba mendaftar akun Facebook...")
     api_key = '882a8490361da98702bf97a021ddc14d'
     secret = '62f8ce9f74b12f84c123cc23437a4a32'
     gender = random.choice(['M', 'F'])
     req = {
-        'api_key': api_key, 'attempt_login': True, 'birthday': birthday.strftime('%Y-%m-%d'),
+        'api_key': api_key, 'attempt_login': True, 'birthday': birthday.strftime('%Y-%-m-%d'),
         'client_country_code': 'EN', 'fb_api_caller_class': 'com.facebook.registration.protocol.RegisterAccountMethod',
         'fb_api_req_friendly_name': 'registerAccount', 'firstname': first_name, 'format': 'json',
         'gender': gender, 'lastname': last_name, 'email': email, 'locale': 'en_US',
@@ -77,8 +82,8 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
     sorted_req = sorted(req.items(), key=lambda x: x[0])
     sig = ''.join(f'{k}={v}' for k, v in sorted_req)
     ensig = hashlib.md5((sig + secret).encode()).hexdigest()
-    req['sig'] = ensig
     api_url = 'https://b-api.facebook.com/method/user.register'
+    req['sig'] = ensig
     
     reg = _call(api_url, req)
     
@@ -94,49 +99,26 @@ def register_facebook_account(email, password, first_name, last_name, birthday):
     print_account_info(email, password, id_akun, f"{first_name} {last_name}", birthday, gender, token)
 
 def print_account_info(email, pw, uid, name, dob, gender, token):
-    """Mencetak informasi akun dalam kotak yang rapi dan sejajar."""
-    info_dict = {
+    """Mencetak informasi akun dengan gaya profesional."""
+    
+    print('\n\x1b[1;37m' + ' ' * 4 + '─── AKUN BERHASIL DIBUAT ──────────' + '\x1b[0m')
+    
+    info = {
         "Email": email,
         "Password": pw,
         "Nama": name,
         "UID": uid,
         "TTL": f"{dob.strftime('%d-%m-%Y')} ({gender})",
-        "Token": token  # Menampilkan token lengkap
+        "Token": token
     }
     
-    # Menentukan lebar kotak berdasarkan data terpanjang
-    max_label_len = max(len(k) for k in info_dict.keys())
-    # Menghitung lebar value terpanjang, khusus untuk token yang bisa sangat panjang
-    max_value_len = 0
-    for v in info_dict.values():
-        if len(v) > max_value_len:
-            max_value_len = len(v)
+    max_label_len = max(len(k) for k in info.keys())
 
-    box_width = max_label_len + max_value_len + 7  # 7 untuk spasi dan border
-    
-    # Cetak Kotak
-    print("\n\x1b[38;5;47m" + "+-" + "-" * box_width + "-+")
-    print(f"| \x1b[1;37m{'INFORMASI AKUN':^{box_width}} \x1b[0m\x1b[38;5;47m|")
-    print("+-" + "-" * box_width + "-+")
-    
-    for label, value in info_dict.items():
+    for label, value in info.items():
         label_padded = label.ljust(max_label_len)
-        # Membuat value terbungkus rapi jika terlalu panjang (khususnya token)
-        # Ini adalah pendekatan sederhana, untuk yang lebih kompleks perlu library textwrap
-        value_chunks = [value[i:i+max_value_len] for i in range(0, len(value), max_value_len)]
-        
-        # Cetak baris pertama dengan label
-        value_padded_first = value_chunks[0].ljust(max_value_len)
-        print(f"| \x1b[38;5;226m{label_padded} : \x1b[38;5;46m{value_padded_first} \x1b[0m\x1b[38;5;47m|")
-        
-        # Cetak sisa baris (jika ada) tanpa label
-        if len(value_chunks) > 1:
-            empty_label = " " * max_label_len
-            for chunk in value_chunks[1:]:
-                chunk_padded = chunk.ljust(max_value_len)
-                print(f"| \x1b[38;5;226m{empty_label}   \x1b[38;5;46m{chunk_padded} \x1b[0m\x1b[38;5;47m|")
-
-    print("+-" + "-" * box_width + "-+" + "\x1b[0m\n")
+        print(f"\x1b[38;5;226m{' ' * 6}→ {label_padded} \x1b[0m: \x1b[38;5;47m{value}\x1b[0m")
+    
+    print('\x1b[1;37m' + ' ' * 4 + '────────────────────────────────────' + '\x1b[0m\n')
 
 
 def _call(url, params, post=True):
@@ -148,15 +130,15 @@ def _call(url, params, post=True):
             response = requests.get(url, params=params, headers=headers, timeout=15)
         return response.json()
     except Exception as e:
-        print(f"\x1b[38;5;196m[!] Error Koneksi: {e}\x1b[0m")
+        # Mengurangi verbositas error koneksi
         return None
 
 # --- Loop Utama ---
 if __name__ == "__main__":
     print_banner()
     try:
-        jumlah_akun = int(input('\x1b[38;5;226m[?] Berapa banyak akun yang ingin Anda buat?: \x1b[0m'))
-        print('\x1b[38;5;208m' + '='*56 + '\x1b[0m')
+        jumlah_akun = int(input('\x1b[38;5;226m[?] Masukkan jumlah akun yang ingin dibuat: \x1b[0m'))
+        print('\x1b[1;37m' + '─' * 52 + '\x1b[0m')
 
         for i in range(jumlah_akun):
             print(f"\n\x1b[1;37m--- Memproses Akun #{i+1} dari {jumlah_akun} ---\x1b[0m")
@@ -164,7 +146,7 @@ if __name__ == "__main__":
             if email:
                 register_facebook_account(email, password, first_name, last_name, birthday)
             else:
-                print(f"\x1b[38;5;196m[!] Gagal membuat email, proses untuk akun #{i+1} dihentikan.\x1b[0m")
+                print(f"\x1b[38;5;196m[!] Gagal melanjutkan, proses untuk akun #{i+1} dihentikan.\x1b[0m")
             
             time.sleep(3)
 
@@ -175,5 +157,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\x1b[38;5;196m[!] Terjadi error tak terduga: {e}\x1b[0m")
 
-    print('\n\x1b[38;5;208m' + '='*56 + '\x1b[0m')
-    print("\x1b[38;5;46m[✓] Selesai.\x1b[0m")
+    print('\n\x1b[1;37m' + '─' * 52 + '\x1b[0m')
+    print("\x1b[38;5;46m[✓] Semua proses telah selesai.\x1b[0m")
